@@ -152,7 +152,6 @@ namespace Wargon.LeoEcsExtention.Unity {
                 RemoveBtn();
             });
 
-            //if (!entity.gui[index].showing) return;
             foreach (var field in fields)
                 DrawTypeField(component, field);
         }

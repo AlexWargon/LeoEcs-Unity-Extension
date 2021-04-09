@@ -36,17 +36,14 @@ namespace Wargon.LeoEcsExtention.Unity
                 {
                     var h = (float) i / componentsCount;
                     var componentColor = Color.HSVToRGB(h, 0.7f, 0.9f);
-                    //var componentColor = new Color(1f, 0.49f, 0f);
                     componentColor.a = 0.15f;
-                    var style = new GUIStyle(GUI.skin.box);
-                    style.normal.background = NewTexture(2, 2, componentColor);
+                    var style = new GUIStyle(GUI.skin.box) {normal = {background = NewTexture(2, 2, componentColor)}};
                     styles[i] = style;
                 }
             else
                 for (int i = 0, iMax = styles.Length; i < iMax; i++)
                 {
-                    var style = new GUIStyle(GUI.skin.box);
-                    style.normal.background = NewTexture(2, 2, Default);
+                    var style = new GUIStyle(GUI.skin.box) {normal = {background = NewTexture(2, 2, Default)}};
                     styles[i] = style;
                 }
 
@@ -91,35 +88,6 @@ namespace Wargon.LeoEcsExtention.Unity
             body?.Invoke();
             GUILayout.EndVertical();
         }
-
-        private static Styles styles;
-
-        public static Styles Styles
-        {
-            get
-            {
-                if (styles == null)
-                    styles = new Styles();
-                return styles;
-            }
-        }
-        
     }
-    public class Styles
-    {
-        private GUIStyle font1;
-        public GUIStyle Impact
-        {
-            get
-            {
-                if (font1 == null)
-                {
-                    font1 = new GUIStyle();
-                    font1.font = Font.CreateDynamicFontFromOSFont("Impact",14);
-                }
 
-                return font1;
-            }
-        }
-    }
 }

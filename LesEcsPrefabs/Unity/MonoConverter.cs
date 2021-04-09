@@ -2,35 +2,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Leopotam.Ecs;
+using UnityEngine;
 
 namespace Wargon.LeoEcsExtention.Unity {
     public static class MonoConverter {
         private static EcsWorld world;
         public static bool HasWorld => world != null;
-        private static MethodInfo getMethod;
+        private static MethodInfo addComponent = null;
         public static void Init(EcsWorld ecsWorld) 
         {
             world = ecsWorld;
-            getMethod = typeof(EcsEntityExtensions).GetMethods().First(x => x.Name == "Get");
+            addComponent = typeof(Extensions).GetMethod("Add");
         }
         public static EcsWorld GetWorld()
         {
             return world;
         }
-
-        public static void Execute(ref EcsEntity entity, List<object> components) {
+        public static void Execute(ref EcsEntity entity, IEnumerable<object> components)
+        {
             foreach (var component in components) {
-
-                switch (component)
-                {
-                    //START
-
-                    //END
-                }
-
+                var addComponentGeneric = addComponent.MakeGenericMethod(component.GetType());
+                addComponentGeneric.Invoke(null, new []{ entity, component});
             }
         }
     }
+
 }
 
 

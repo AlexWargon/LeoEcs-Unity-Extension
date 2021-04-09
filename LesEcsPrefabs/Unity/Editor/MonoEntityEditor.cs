@@ -2,6 +2,7 @@
 using UnityEngine;
 using System;
 using Leopotam.Ecs;
+using UnityEditor.Compilation;
 
 namespace Wargon.LeoEcsExtention.Unity {
 
@@ -24,67 +25,63 @@ namespace Wargon.LeoEcsExtention.Unity {
             entity = (MonoEntity)target;
             if(!entity.runTime)
                 EditorGUI.BeginChangeCheck();
-            //EntityGUI.Vertical(GUI.skin.box, () =>
-            //{
-                if (entity.runTime)
-                {
-                    EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.Space();
-                    if (GUILayout.Button(new GUIContent("Kill Entity"),GUILayout.Width(154), GUILayout.Height(24)))
-                        entity.Entity.Destroy();
-                    EditorGUILayout.Space();
-                    EditorGUILayout.EndHorizontal();
-                }
-                else
-                {
-                    EditorGUILayout.BeginHorizontal();
-                    entity.destroyComponent = EditorGUILayout.Toggle("Destroy MonoBeh", entity.destroyComponent);
-                    entity.destroyObject = EditorGUILayout.Toggle("Destroy GO", entity.destroyObject);
-                    EditorGUILayout.EndHorizontal();
-                }
 
+            if (entity.runTime)
+            {
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("Run Time", entity.runTime ? "✔" : "✘", EditorStyles.largeLabel);
-                EditorGUILayout.LabelField($"ID:{entity.Entity.GetInternalId().ToString()}");
+                EditorGUILayout.Space();
+                if (GUILayout.Button(new GUIContent("Kill Entity"),GUILayout.Width(154), GUILayout.Height(24)))
+                    entity.Entity.Destroy();
+                EditorGUILayout.Space();
                 EditorGUILayout.EndHorizontal();
-                EntityGUI.Vertical(GUI.skin.box, () =>
+            }
+            else
+            {
+                EditorGUILayout.BeginHorizontal();
+                entity.destroyComponent = EditorGUILayout.Toggle("Destroy MonoBeh", entity.destroyComponent);
+                entity.destroyObject = EditorGUILayout.Toggle("Destroy GO", entity.destroyObject);
+                EditorGUILayout.EndHorizontal();
+            }
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Run Time", entity.runTime ? "✔" : "✘", EditorStyles.largeLabel);
+            EditorGUILayout.LabelField($"ID:{entity.Entity.GetInternalId().ToString()}");
+            EditorGUILayout.EndHorizontal();
+            EntityGUI.Vertical(GUI.skin.box, () =>
+            {
+                if (entity.runTime)
+                    if (!entity.Entity.IsAlive())
+                    {
+                        EditorGUILayout.LabelField("ENTITY DEAD", EditorStyles.whiteLargeLabel);
+                        return;
+                    }
+                EntityGUI.Horizontal(() =>
                 {
-                    if (entity.runTime)
-                        if (!entity.Entity.IsAlive())
-                        {
-                            EditorGUILayout.LabelField("ENTITY DEAD", EditorStyles.whiteLargeLabel);
-                            return;
-                        }
-                    EntityGUI.Horizontal(() =>
-                    {
-                        EditorGUILayout.LabelField($"ECS Components [{entity.ComponentsCount.ToString()}]", EditorStyles.boldLabel);
-                        if (GUILayout.Button(new GUIContent("Clear", "Remove All Components")))
-                            RemoveAll();
-                    });
-                    
-                    EntityGUI.Horizontal(() =>
-                    {
-                        EditorGUILayout.LabelField("Add Component");
-                        if (GUILayout.Button(new GUIContent("▼"), GUILayout.Width(21), GUILayout.Height(21)))
-                            flowed = !flowed;
-                    });
-
-                    if (ComponentTypesList.Count > 1)
-                        entity.lastIndex = EditorGUILayout.Popup(entity.lastIndex, ComponentTypesList.GetAllInArray());
-                    else
-                        ComponentTypesList.Init();
-
-                    if (entity.lastIndex != 0)
-                        AddComponent(entity.lastIndex);
-                    
-                    EditorGUILayout.BeginVertical(GUI.skin.box);
-                    if (!flowed)
-                        DrawComponents();
-                    EditorGUILayout.EndVertical();
-
+                    EditorGUILayout.LabelField($"ECS Components [{entity.ComponentsCount.ToString()}]", EditorStyles.boldLabel);
+                    if (GUILayout.Button(new GUIContent("Clear", "Remove All Components")))
+                        RemoveAll();
+                });
+                
+                EntityGUI.Horizontal(() =>
+                {
+                    EditorGUILayout.LabelField("Add Component");
+                    if (GUILayout.Button(new GUIContent("▼"), GUILayout.Width(21), GUILayout.Height(21)))
+                        flowed = !flowed;
                 });
 
-            //});
+                if (ComponentTypesList.Count > 1)
+                    entity.lastIndex = EditorGUILayout.Popup(entity.lastIndex, ComponentTypesList.GetAllInArray());
+                else
+                    ComponentTypesList.Init();
+
+                if (entity.lastIndex != 0)
+                    AddComponent(entity.lastIndex);
+                
+                EditorGUILayout.BeginVertical(GUI.skin.box);
+                if (!flowed)
+                    DrawComponents();
+                EditorGUILayout.EndVertical();
+            });
 
             if (entity.runTime) return;
             if (EditorGUI.EndChangeCheck())
