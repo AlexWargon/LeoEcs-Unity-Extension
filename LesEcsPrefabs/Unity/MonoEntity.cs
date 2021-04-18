@@ -13,7 +13,7 @@ namespace Wargon.LeoEcsExtention.Unity {
         private EcsWorld world;
         [HideInInspector] public int lastIndex = 0;
         [SerializeReference] public List<object> Components = new List<object>();
-        public int ComponentsCount => runTime ? Entity.GetComponentsCount() : Components.Count;
+        public int ComponentsCount => Components.Count;
         public bool runTime;
         public bool destroyObject;
         public bool destroyComponent;
