@@ -2,7 +2,7 @@
 # How to use:
 0) Init EcsWorld from Awake method
 
-1) After instatiating EcsWorld, Call MonoConvertor.Init(link to world)
+1) After instatiating of EcsWorld, call MonoConvertor.Init(link to world)
 ```C#
 world = new EcsWorld();
 MonoConverter.Init(world);
