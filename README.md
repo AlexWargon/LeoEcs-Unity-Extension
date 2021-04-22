@@ -20,4 +20,4 @@ Must be something like that
 
 ![image](https://user-images.githubusercontent.com/37613162/115751740-24a8be00-a3a2-11eb-8f63-4788e3c3770d.png)
 
-All components will be added automatically, no need to build entities manually from code
+All components will be added automatically, after scene start or when prefab will be spawned on scene.
