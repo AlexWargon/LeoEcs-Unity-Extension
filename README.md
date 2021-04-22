@@ -1,6 +1,6 @@
 # LeoEcs Unity Extension
 # How to use:
-0) Init EcsWorld in Awake Method
+0) Init EcsWorld from Awake method
 
 1) After instatiating EcsWorld, Call MonoConvertor.Init(link to world)
 ```C#
