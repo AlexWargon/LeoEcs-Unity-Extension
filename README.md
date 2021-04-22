@@ -10,7 +10,7 @@ MonoConverter.Init(world);
 
 2) Add to your component attribute [EcsComponent]
 ```C#
-[EcscComponent]
+[EcsComponent]
 public struct Health 
 { 
     public int value;
