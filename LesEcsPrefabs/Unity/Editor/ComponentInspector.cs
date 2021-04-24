@@ -12,15 +12,12 @@ namespace Wargon.LeoEcsExtention.Unity {
 
         private static bool remove;
         
-        public static void DrawComponentBox(MonoEntity entity, int index)
+        public static void DrawComponentBox(MonoEntity entity, int index, SerializedProperty prop)
         {
-            if(entity.ComponentsCount < index) return;
+            if(index >= entity.ComponentsCount) return;
             EntityGUI.Vertical(EntityGUI.GetColorStyle(entity.ComponentsCount, index), () =>
             {
-                // if (entity.runTime)
-                //     DrawRunTimeMode(entity, index);
-                // else
-                    DrawEditorMode(entity, index);
+                DrawProperty(entity, index, prop);
             });
             if (remove)
                 Remove(entity, index);
@@ -155,6 +152,57 @@ namespace Wargon.LeoEcsExtention.Unity {
             foreach (var field in fields)
                 DrawTypeField(component, field);
         }
+        
+        private static void DrawProperty(MonoEntity entity, int index, SerializedProperty prop)
+        {
+            var component = entity.Components[index];
+            if (component == null)
+            {
+                entity.Components = entity.Components.Where(x => x != null).ToList();
+                return;
+            }
+
+            EntityGUI.Horizontal(() =>
+            {
+                EditorGUILayout.LabelField(component.GetType().Name, EditorStyles.boldLabel);
+                RemoveBtn();
+            });
+
+            EditorGUI.indentLevel++;
+            DrawProperties(prop, true);
+            EditorGUI.indentLevel--;
+        }
+        
+        private static void DrawProperties(SerializedProperty prop, bool drawChildren)
+        {
+            var lastPropPath = string.Empty;
+            foreach (SerializedProperty p in prop)
+            {
+                if (p.isArray && p.propertyType == SerializedPropertyType.Generic)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    p.isExpanded = EditorGUILayout.Foldout(p.isExpanded, p.displayName);
+                    EditorGUILayout.EndHorizontal();
+
+                    if (p.isExpanded)
+                    {
+                        EditorGUI.indentLevel++;
+                        DrawProperties(p, drawChildren);
+                        EditorGUI.indentLevel--;
+                    }
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(lastPropPath) && p.propertyPath.Contains(lastPropPath))
+                    {
+                        continue;
+                    }
+
+                    lastPropPath = p.propertyPath;
+                    EditorGUILayout.PropertyField(p, drawChildren);
+                }
+            }
+        }
 
         // private static void DrawRunTimeMode(MonoEntity entity, int index)
         // {
@@ -179,5 +227,4 @@ namespace Wargon.LeoEcsExtention.Unity {
         //     entity.Components[index] = component;
         // }
     }
-
 }

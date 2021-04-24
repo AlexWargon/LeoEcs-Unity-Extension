@@ -85,7 +85,10 @@ namespace Wargon.LeoEcsExtention.Unity {
 
             if (entity.runTime) return;
             if (EditorGUI.EndChangeCheck())
+            {
                 EditorUtility.SetDirty(target);
+                serializedObject.ApplyModifiedProperties();
+            }
         }
 
         private object NewObject(Type type) {
@@ -139,8 +142,12 @@ namespace Wargon.LeoEcsExtention.Unity {
         //     entity.lastIndex = 0;
         // }
         private void DrawComponents() {
-            for (var index = 0; index < entity.ComponentsCount; index++)
-                ComponentInspector.DrawComponentBox(entity, index);
+            var components = serializedObject.FindProperty("Components");
+            for (int i = 0; i < components.arraySize; i++)
+            {
+                var dataProperty = components.GetArrayElementAtIndex(i);
+                ComponentInspector.DrawComponentBox(entity, i, dataProperty);
+            }
         }
     }
 }
