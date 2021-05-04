@@ -1,4 +1,4 @@
-# LeoEcs Unity Extension
+# LeoEcs Unity Prefabs
 # How to use:
 0) Init EcsWorld from Awake method
 
